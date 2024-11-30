@@ -5,6 +5,9 @@ from django.urls import reverse
 
 from .models import Question, Choice
 from .forms import QuestionForm, ChoiceFormSet
+from account.decorator import group_required
+
+
 
 # Get questions and display them
 
@@ -54,7 +57,7 @@ def vote(request, question_id):
         return HttpResponseRedirect(reverse('polls:results', args=(question.id, )))
 
 
-
+@group_required('admin')
 def create_poll(request):
     if request.method == 'POST':
         question_form = QuestionForm(request.POST)
