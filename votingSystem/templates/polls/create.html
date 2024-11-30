@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crear Encuesta</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <h1>Crear Nueva Encuesta</h1>
+
+    <form method="post">
+        {% csrf_token %}
+
+        <h2>Pregunta</h2>
+        {{ question_form.as_p }}
+
+        <h2>Opciones</h2>
+        {{ choice_formset.management_form }}
+        <div id="choices">
+            {% for form in choice_formset %}
+                <div class="choice-form">
+                    {{ form.as_p }}
+                </div>
+            {% endfor %}
+        </div>
+
+        <button type="button" id="add-choice">Añadir opción</button>
+        <button type="submit">Crear Encuesta</button>
+    </form>
+
+    <script>
+        $(document).ready(function () {
+            let totalForms = parseInt($('#id_form-TOTAL_FORMS').val());
+
+            $('#add-choice').click(function () {
+                let newForm = $('.choice-form:last').clone();
+
+                newForm.find('input').each(function () {
+                    let name = $(this).attr('name').replace(/-\d+-/, `-${totalForms}-`);
+                    let id = $(this).attr('id').replace(/-\d+-/, `-${totalForms}-`);
+                    $(this).attr({ 'name': name, 'id': id }).val('');
+                });
+
+                $('#choices').append(newForm);
+                totalForms++;
+                $('#id_form-TOTAL_FORMS').val(totalForms);
+            });
+        });
+    </script>
+</body>
+</html>
+
+{% endblock %}

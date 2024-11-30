@@ -1,9 +1,10 @@
 from django.template import loader
 from django.http import HttpResponse, HttpResponseRedirect
-from django.shortcuts import get_object_or_404, render
+from django.shortcuts import get_object_or_404, render, redirect
 from django.urls import reverse
 
 from .models import Question, Choice
+from .forms import QuestionForm, ChoiceFormSet
 
 # Get questions and display them
 
@@ -51,3 +52,31 @@ def vote(request, question_id):
         # with POST data. This prevents data from being posted twice if a
         # user hits the Back button.
         return HttpResponseRedirect(reverse('polls:results', args=(question.id, )))
+
+
+
+def create_poll(request):
+    if request.method == 'POST':
+        question_form = QuestionForm(request.POST)
+        
+        choice_formset = ChoiceFormSet(request.POST)
+        if question_form.is_valid() and choice_formset.is_valid():
+            question = question_form.save()
+            print('AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA')
+            print(choice_formset)
+
+            for form in choice_formset:
+                choice = form.save(commit=False)  
+                if choice.choice_text:
+                    choice.question = question
+                    choice.save()
+
+            return redirect('index')
+    else:
+        question_form = QuestionForm()
+        choice_formset = ChoiceFormSet(queryset=Choice.objects.none())
+
+    return render(request, 'polls/create.html', {
+        'question_form': question_form,
+        'choice_formset': choice_formset,
+    })

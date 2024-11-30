@@ -1,5 +1,5 @@
 from django.contrib import admin
-from django.contrib.auth.models import Group
+from django.contrib.auth.models import Group, Permission
 from django.contrib.contenttypes.models import ContentType
 
 
@@ -22,7 +22,6 @@ if created_admin:
     # Obtener permisos de los modelos
     question_ct = ContentType.objects.get_for_model(Question)
     choice_ct = ContentType.objects.get_for_model(Choice)
-    content_type = ContentType.objects.get_for_model(YourModel)  # Reemplaza `YourModel`
     permissions = Permission.objects.filter(content_type__in=[question_ct, choice_ct])
     admin_group.permissions.set(permissions)
 
