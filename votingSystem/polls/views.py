@@ -91,8 +91,6 @@ def create_poll(request):
         choice_formset = ChoiceFormSet(request.POST)
         if question_form.is_valid() and choice_formset.is_valid():
             question = question_form.save()
-            print('AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA')
-            print(choice_formset)
 
             for form in choice_formset:
                 choice = form.save(commit=False)  
