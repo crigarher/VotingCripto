@@ -1,24 +1,121 @@
 {% extends 'base.html' %}
-{% block content %}
 
+{% block content %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Crear Encuesta</title>
+    <title>Create Survey</title>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f7fb;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 50px auto;
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            color: #3b3b3b;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        h2 {
+            font-size: 1.5rem;
+            color: #5e5e5e;
+            margin-bottom: 15px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            font-weight: bold;
+            display: block;
+            margin-bottom: 8px;
+            color: #4a4a4a;
+        }
+
+        input[type="text"], input[type="radio"], input[type="number"] {
+            width: 100%;
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+            box-sizing: border-box;
+        }
+
+        .choice-form {
+            margin-bottom: 10px;
+        }
+
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            font-size: 1rem;
+            cursor: pointer;
+            margin: 15px 0;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        #add-choice {
+            background-color: #007bff;
+            margin: 10px 0;
+        }
+
+        #add-choice:hover {
+            background-color: #0056b3;
+        }
+
+        .form-footer {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .form-footer a {
+            color: #007bff;
+            text-decoration: none;
+        }
+
+        .form-footer a:hover {
+            text-decoration: underline;
+        }
+
+    </style>
 </head>
 <body>
-    <h1>Crear Nueva Encuesta</h1>
+
+<div class="container">
+    <h1>Create a New Survey</h1>
 
     <form method="post">
         {% csrf_token %}
 
-        <h2>Pregunta</h2>
-        {{ question_form.as_p }}
+        <h2>Question</h2>
+        <div class="form-group">
+            {{ question_form.as_p }}
+        </div>
 
-        <h2>Opciones</h2>
+        <h2>Options</h2>
         {{ choice_formset.management_form }}
         <div id="choices">
             {% for form in choice_formset %}
@@ -28,30 +125,33 @@
             {% endfor %}
         </div>
 
-        <button type="button" id="add-choice">Añadir opción</button>
-        <button type="submit">Crear Encuesta</button>
+        <button type="button" id="add-choice">Add Option</button>
+        <button type="submit">Create Survey</button>
     </form>
 
-    <script>
-        $(document).ready(function () {
-            let totalForms = parseInt($('#id_form-TOTAL_FORMS').val());
+</div>
 
-            $('#add-choice').click(function () {
-                let newForm = $('.choice-form:last').clone();
+<script>
+    $(document).ready(function () {
+        let totalForms = parseInt($('#id_form-TOTAL_FORMS').val());
 
-                newForm.find('input').each(function () {
-                    let name = $(this).attr('name').replace(/-\d+-/, `-${totalForms}-`);
-                    let id = $(this).attr('id').replace(/-\d+-/, `-${totalForms}-`);
-                    $(this).attr({ 'name': name, 'id': id }).val('');
-                });
+        $('#add-choice').click(function () {
+            let newForm = $('.choice-form:last').clone();
 
-                $('#choices').append(newForm);
-                totalForms++;
-                $('#id_form-TOTAL_FORMS').val(totalForms);
+            newForm.find('input').each(function () {
+                let name = $(this).attr('name').replace(/-\d+-/, `-${totalForms}-`);
+                let id = $(this).attr('id').replace(/-\d+-/, `-${totalForms}-`);
+                $(this).attr({ 'name': name, 'id': id }).val('');
             });
+
+            $('#choices').append(newForm);
+            totalForms++;
+            $('#id_form-TOTAL_FORMS').val(totalForms);
         });
-    </script>
+    });
+</script>
+
 </body>
 </html>
-
 {% endblock %}
+

@@ -25,6 +25,7 @@ SECRET_KEY = 'django-insecure-n^s8o6o9bgf0z=)5%l%q-i(6t1pc&bm_mz@)#3mc_%nf!1d&ux
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
+
 ALLOWED_HOSTS = []
 
 
@@ -38,8 +39,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'polls.apps.PollsConfig',
-    'pages.apps.PagesConfig',
     'account.apps.AccountConfig',
+    'forum.apps.ForumConfig',
 ]
 
 MIDDLEWARE = [
@@ -114,7 +115,7 @@ USE_I18N = True
 
 USE_TZ = True
 
-LOGIN_REDIRECT_URL = "/polls/" 
+LOGIN_REDIRECT_URL = "/" 
 LOGIN_URL = 'login'
 LOGOUT_URL = 'logout'
 # Static files (CSS, JavaScript, Images)
@@ -122,6 +123,7 @@ LOGOUT_URL = 'logout'
 
 STATIC_URL = 'static/'
 
+STATICFILES_DIRS = [BASE_DIR / 'static']
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 

@@ -1,0 +1,130 @@
+{% block content %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crear Hilo - Foro</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f7fa;
+            margin: 0;
+            padding: 0;
+        }
+
+        header {
+            background-color: #007bff;
+            color: white;
+            padding: 15px 0;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 2em;
+            margin: 0;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 800px;
+            margin: 20px auto;
+            background-color: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        label {
+            font-size: 1.1em;
+            color: #333;
+            margin-bottom: 5px;
+            display: inline-block;
+        }
+
+        input, textarea {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 1em;
+            box-sizing: border-box;
+        }
+
+        textarea {
+            resize: vertical;
+        }
+
+        button {
+            background-color: #007bff;
+            color: white;
+            padding: 10px 20px;
+            font-size: 1.1em;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        footer {
+            background-color: #333;
+            color: white;
+            text-align: center;
+            padding: 15px 0;
+            margin-top: 40px;
+        }
+
+    </style>
+</head>
+<body>
+
+
+
+    <div class="container">
+        <form method="POST" id="create-thread-form">
+            {% csrf_token %}
+            <label for="title">Título:</label>
+            <input type="text" id="title" name="title" required><br>
+            
+            <label for="body">Contenido:</label><br>
+            <textarea id="body" name="body" rows="4" required></textarea><br><br>
+            
+            <button type="submit">Crear Hilo</button>
+        </form>
+    </div>
+
+
+    <script>
+        document.getElementById('create-thread-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const title = document.getElementById('title').value;
+            const body = document.getElementById('body').value;
+
+            fetch("{% url 'create_thread' %}", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token }}'
+                },
+                body: JSON.stringify({ title: title, body: body })
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Hilo creado:', data);
+                window.location.href = "{% url 'thread_list' %}"; // Redirigir a la lista de hilos después de crear el hilo
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        });
+    </script>
+
+</body>
+</html>
+{% endblock %}

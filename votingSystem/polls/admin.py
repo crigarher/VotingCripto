@@ -1,17 +1,7 @@
 from django.contrib import admin
 from django.contrib.auth.models import Group, Permission
 from django.contrib.contenttypes.models import ContentType
-
-
-
 from .models import Question, Choice
-
-# admin.site.register(Question)
-# admin.site.register(Choice)
-
-admin.site.site_header = "Pollster Admin"
-admin.site.site_title = "Pollster Admin Area"
-admin.site.index_title = "Welcome to the Pollster Admin Area"
 
 # Crear grupos si no existen
 admin_group, created_admin = Group.objects.get_or_create(name='admin')

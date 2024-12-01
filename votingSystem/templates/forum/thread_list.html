@@ -1,0 +1,118 @@
+
+{% block content %}
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lista de Hilos - Foro</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f7fa;
+            margin: 0;
+            padding: 0;
+        }
+
+        header {
+            background-color: #007bff;
+            color: white;
+            padding: 15px 0;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 2em;
+            margin: 0;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 20px auto;
+        }
+
+        h2 {
+            text-align: right;
+            font-size: 1.2em;
+            margin-bottom: 20px;
+        }
+
+        a {
+            color: #007bff;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        .thread-list {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .thread-item {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            margin-bottom: 15px;
+            padding: 20px;
+            transition: transform 0.2s ease-in-out;
+        }
+
+        .thread-item:hover {
+            transform: scale(1.02);
+        }
+
+        .thread-title {
+            font-size: 1.5em;
+            margin: 0;
+            color: #333;
+        }
+
+        .thread-meta {
+            font-size: 0.9em;
+            color: #777;
+            margin-top: 5px;
+        }
+
+        .no-threads {
+            text-align: center;
+            font-size: 1.2em;
+            color: #888;
+        }
+
+        footer {
+            background-color: #333;
+            color: white;
+            text-align: center;
+            padding: 15px 0;
+            margin-top: 40px;
+        }
+
+    </style>
+</head>
+<body>
+  
+    <div class="container">
+        <h2><a href="{% url 'create_thread' %}">Create a new thread</a></h2>
+
+        <ul class="thread-list">
+            {% for thread in threads %}
+                <li class="thread-item">
+                    <a href="{% url 'thread_detail' thread.id %}" class="thread-title">{{ thread.title }}</a>
+                    <p class="thread-meta">Created the {{ thread.created_at|date:"d M Y, H:i" }}</p>
+                </li>
+            {% empty %}
+                <li class="no-threads">There isn't any threads.</li>
+            {% endfor %}
+        </ul>
+    </div>
+
+
+</body>
+</html>
+{% endblock %}

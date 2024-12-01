@@ -1,0 +1,196 @@
+{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thread Details</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f7fa;
+            margin: 0;
+            padding: 0;
+        }
+
+        header {
+            background-color: #007bff;
+            color: white;
+            padding: 15px 0;
+            text-align: center;
+        }
+
+        h1, h2 {
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 900px;
+            margin: 20px auto;
+            background-color: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .thread-header {
+            border-bottom: 2px solid #eee;
+            padding-bottom: 20px;
+            margin-bottom: 20px;
+        }
+
+        .thread-header h1 {
+            font-size: 1.8em;
+        }
+
+        .thread-header p {
+            font-size: 1em;
+            color: #555;
+        }
+
+        .thread-body {
+            font-size: 1.1em;
+            line-height: 1.6;
+            color: #333;
+        }
+
+        .comment-list {
+            margin-top: 40px;
+        }
+
+        .comment-list li {
+            background-color: #f9f9f9;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            padding: 15px;
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .comment-list strong {
+            font-size: 1.1em;
+        }
+
+        .comment-list small {
+            font-size: 0.9em;
+            color: #888;
+        }
+
+        .comment-list p {
+            margin-top: 10px;
+            font-size: 1.1em;
+            line-height: 1.5;
+        }
+
+        .create-comment-section {
+            margin-top: 40px;
+        }
+
+        textarea {
+            width: 100%;
+            padding: 10px;
+            font-size: 1em;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            margin-bottom: 15px;
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        button {
+            background-color: #007bff;
+            color: white;
+            padding: 10px 20px;
+            font-size: 1.1em;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        footer {
+            background-color: #333;
+            color: white;
+            text-align: center;
+            padding: 15px 0;
+            margin-top: 40px;
+        }
+    </style>
+</head>
+<body>
+
+
+<div class="container">
+    <div class="thread-header">
+        <h1>{{ thread.title }}</h1>
+        <p><strong>Created by:</strong> {{ thread.author.username }} - <strong>Created at:</strong> {{ thread.created_at }}</p>
+    </div>
+
+    <div class="thread-body">
+        <p>{{ thread.body }}</p>
+    </div>
+
+    <div class="comment-list">
+        <h2>Comments</h2>
+        <ul id="post-list">
+            {% for post in posts %}
+                <li>
+                    <strong>{{ post.author.username }}</strong> <small>({{ post.created_at }})</small>
+                    <p>{{ post.body }}</p>
+                </li>
+            {% empty %}
+                <li>No comments yet.</li>
+            {% endfor %}
+        </ul>
+    </div>
+
+    <div class="create-comment-section">
+        <h3>Add a Comment</h3>
+        <form id="create-post-form">
+            {% csrf_token %}
+            <textarea id="post-body" name="body" required></textarea><br><br>
+            <button type="submit">Add Comment</button>
+        </form>
+    </div>
+</div>
+
+
+<script>
+    document.getElementById('create-post-form').addEventListener('submit', function(event) {
+        event.preventDefault();
+
+        const body = document.getElementById('post-body').value;
+
+        fetch("{% url 'create_post' thread.id %}", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': '{{ csrf_token }}'
+            },
+            body: JSON.stringify({ body: body })
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log('Comment added:', data);
+
+            const postList = document.getElementById('post-list');
+            const newPost = document.createElement('li');
+            newPost.innerHTML = `<strong>${data.author}</strong> <small>(${data.created_at})</small><p>${data.body}</p>`;
+            postList.appendChild(newPost);
+
+            document.getElementById('post-body').value = ''; // Clear the textarea
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+    });
+</script>
+
+</body>
+</html>
+{% endblock %}
