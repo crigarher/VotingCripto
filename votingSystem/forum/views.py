@@ -35,7 +35,14 @@ def create_thread(request):
 def thread_detail(request, thread_id):
     thread = get_object_or_404(Thread, id=thread_id)
     posts = thread.posts.all().order_by('created_at')
-    return render(request, 'forum/thread_detail.html', {'thread': thread, 'posts': posts})
+    questions = thread.questions.all()  # Acceso gracias a related_name='questions'
+    user_is_admin = (
+        request.user.is_authenticated and 
+        request.user.groups.filter(name="admin").exists()
+    )    
+    return render(request, 'forum/thread_detail.html', 
+            {'thread': thread, 'posts': posts, 'questions': questions, 'user_is_admin': user_is_admin})
+
 
 @login_required
 def create_post(request, thread_id):

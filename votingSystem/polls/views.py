@@ -3,6 +3,8 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render, redirect
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
+
+from forum.models import Thread
 from .models import Question, Choice, Vote
 from .forms import QuestionForm, ChoiceFormSet
 from account.decorator import group_required
@@ -84,21 +86,29 @@ def vote(request, question_id):
 
 
 @group_required('admin')
-def create_poll(request):
+def create_poll(request, thread_id):
+    # Obtén el hilo asociado al thread_id
+    thread = get_object_or_404(Thread, id=thread_id)
+
     if request.method == 'POST':
         question_form = QuestionForm(request.POST)
-        
         choice_formset = ChoiceFormSet(request.POST)
-        if question_form.is_valid() and choice_formset.is_valid():
-            question = question_form.save()
 
+        if question_form.is_valid() and choice_formset.is_valid():
+            # Crear la pregunta asociada al hilo
+            question = question_form.save(commit=False)
+            question.thread = thread
+            question.save()
+
+            # Guardar las opciones
             for form in choice_formset:
-                choice = form.save(commit=False)  
+                choice = form.save(commit=False)
                 if choice.choice_text:
                     choice.question = question
                     choice.save()
 
-            return redirect('polls:index')
+            # Redirigir de vuelta al detalle del hilo
+            return redirect('thread_detail', thread_id=thread_id)
     else:
         question_form = QuestionForm()
         choice_formset = ChoiceFormSet(queryset=Choice.objects.none())
@@ -106,4 +116,5 @@ def create_poll(request):
     return render(request, 'polls/create.html', {
         'question_form': question_form,
         'choice_formset': choice_formset,
+        'thread': thread,
     })

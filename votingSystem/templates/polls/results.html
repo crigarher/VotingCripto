@@ -1,16 +1,19 @@
 {% extends 'base.html' %}
+
 {% block content %}
-<h1 class="mb-5 text-center">{{ question.question_text }}</h1>
+<div class="container my-5">
+    <h1 class="text-center mb-4" style="font-size: 2.5rem; color: #333;">{{ question.question_text }}</h1>
 
-<ul class="list-group mb-5">
-    {% for choice in question.choice_set.all %}
-    <li class="list-group-item">
-        {{ choice.choice_text }} <span class="badge badge-success float-right">{{ choice.votes }}
-            vote{{ choice.votes | pluralize }}</span>
-    </li>
-    {% endfor %}
-</ul>
+    <ul class="list-group shadow-sm rounded-lg mb-5">
+        {% for choice in question.choice_set.all %}
+        <li class="list-group-item d-flex justify-content-between align-items-center bg-light rounded-lg mb-3 shadow-sm">
+            <span style="font-size: 1.2rem; color: #444;">{{ choice.choice_text }}</span>
+            <span class="badge badge-success py-2 px-4" style="font-size: 1.1rem; border-radius: 12px; background-color: #28a745;">{{ choice.votes }} vote{{ choice.votes | pluralize }}</span>
+        </li>
+        {% endfor %}
+    </ul>
 
-<a class="btn btn-secondary" href="{% url 'polls:index' %}">Back To Polls</a>
+    <a href="{% url 'polls:index' %}" class="btn btn-primary btn-lg w-100" style="border-radius: 8px; background-color: #007bff; font-size: 1.2rem; padding: 15px; transition: background-color 0.3s ease;">Back To Polls</a>
+</div>
 
 {% endblock %}
