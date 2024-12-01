@@ -56,3 +56,24 @@ def create_post(request, thread_id):
             })
         except Exception as e:
             return JsonResponse({'error': str(e)}, status=400)
+        
+
+@login_required
+def obtener_posts(request, thread_id):
+    try:
+        thread = get_object_or_404(Thread, id=thread_id)
+        posts = thread.posts.all().order_by('created_at')
+
+        posts_json = [
+            {
+                'id': post.id,
+                'author': post.author.username,
+                'body': post.body,
+                'created_at': post.created_at.strftime('%Y-%m-%d %H:%M:%S'),
+            } for post in posts
+        ]
+
+        return JsonResponse({'posts': posts_json})
+
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=400)

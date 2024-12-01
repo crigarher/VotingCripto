@@ -189,6 +189,34 @@
             console.error('Error:', error);
         });
     });
+
+     function actualizarPosts() {
+        fetch("{% url 'obtener_posts' thread.id %}")
+        .then(response => response.json())
+        .then(data => {
+            console.log('Posts updated:', data);
+
+            // Limpiar la lista de posts existente
+            const postList = document.getElementById('post-list');
+            postList.innerHTML = '';
+
+            // Renderizar los nuevos posts
+            data.posts.forEach(post => {
+                const postItem = document.createElement('li');
+                postItem.innerHTML = `<strong>${post.author}</strong> <small>(${post.created_at})</small><p>${post.body}</p>`;
+                postList.appendChild(postItem);
+            });
+        })
+        .catch(error => {
+            console.error('Error al actualizar los posts:', error);
+        });
+    }
+
+    // Llamar a la función de actualización cada 5 segundos
+    setInterval(actualizarPosts, 1000);
+
+    // Llamar a la función una vez al cargar la página
+    actualizarPosts();
 </script>
 
 </body>
