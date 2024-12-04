@@ -1,16 +1,17 @@
 import hashlib
+import os
 import uuid
+from xhtml2pdf import pisa
 from django.template import loader
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render, redirect
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
-
 from forum.models import Thread
 from .models import Question, Choice, Vote
 from .forms import QuestionForm, ChoiceFormSet
 from account.decorator import group_required
-
+from django.template.loader import render_to_string
 
 
 # Get questions and display them
@@ -43,7 +44,7 @@ def index(request):
 def detail(request, question_id):
     question = get_object_or_404(Question, pk=question_id)
     # Verificar si el usuario ya votó
-    has_voted = Vote.objects.filter(user=request.user, question=question).exists()
+    has_voted = Vote.objects.filter(user=request.session['alias_hash'], question=question).exists()
     return render(request, 'polls/detail.html', {'question': question, 'has_voted': has_voted})
 
 # Get question and display results
@@ -60,7 +61,7 @@ def results(request, question_id):
 @login_required
 def vote(request, question_id):
     question = get_object_or_404(Question, pk=question_id)
-
+    
     if  not question.is_active:
         return render(request, 'polls/detail.html', {
             'question': question,
@@ -68,7 +69,7 @@ def vote(request, question_id):
         })
     
     # Verificar si el usuario ya votó en esta pregunta
-    if Vote.objects.filter(user=request.user, question=question).exists():
+    if Vote.objects.filter(user=request.session['alias_hash'], question=question).exists():
         return render(request, 'polls/detail.html', {
             'question': question,
             'error_message': "You have already voted on this question.",
@@ -88,7 +89,7 @@ def vote(request, question_id):
         selected_choice.save()
 
         # Registrar el voto en el modelo Vote
-        Vote.objects.create(user=request.user, question=question)
+        Vote.objects.create(user=request.session['alias_hash'], question=question, choice=selected_choice)
 
         # Redirigir al usuario a la página de resultados
         return HttpResponseRedirect(reverse('polls:results', args=(question.id, )))
@@ -131,3 +132,27 @@ def create_poll(request, thread_id):
 def generate_alias_hash():
     alias = str(uuid.uuid4())
     return hashlib.sha256(alias.encode()).hexdigest()
+
+def generate_pdf(request, question_id):
+    # Obtener la pregunta y sus opciones
+    question = get_object_or_404(Question, id=question_id)
+    votes = Vote.objects.filter(question=question)
+    print(question.question_text)
+    # Renderizar el contexto en una plantilla HTML
+    context = {
+        'question': question,
+        'votes': votes,
+    }
+    template_path = 'polls/question_result_pdf.html'
+    response = HttpResponse(content_type='application/pdf')
+    response['Content-Disposition'] = f'attachment; filename="results_{question.id}.pdf"'
+
+    # Convertir HTML a PDF usando xhtml2pdf
+    html = render_to_string(template_path, context)
+    pisa_status = pisa.CreatePDF(html, dest=response)
+
+    # Verificar si hubo errores en la conversión
+    if pisa_status.err:
+        return HttpResponse('Error al generar el PDF', status=500)
+    
+    return response

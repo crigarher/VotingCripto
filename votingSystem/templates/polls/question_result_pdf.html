@@ -1,0 +1,68 @@
+{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Resultados de la Votación</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        h1, h2 {
+            color: #333;
+        }
+        table {
+            width: 100%; /* La tabla ocupa el 100% del contenedor /
+            border-collapse: collapse; / Asegura que los bordes se colapsen en una sola línea /
+            margin-top: 20px;
+        }
+        table, th, td {
+            border: 1px solid #ddd; / Bordes para la tabla y celdas /
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+            vertical-align: top; / Alinea contenido al inicio de la celda /
+            white-space: normal; / Permite saltos de línea /
+            word-wrap: break-word; / Rompe palabras largas /
+            overflow-wrap: break-word; / Compatibilidad adicional /
+        }
+        th {
+            background-color: #f4f4f4; / Fondo gris para el encabezado /
+        }
+        / Ajusta las proporciones de las columnas /
+        .col1 {
+            width: 30%; / Primera columna ocupa el 30% /
+        }
+        .col2 {
+            width: 70%; / Segunda columna ocupa el 70% */
+        }
+    </style>
+</head>
+<body>
+    <h1>Resultados de la Votación</h1>
+    <h2>Pregunta: {{ question.question_text }}</h2>
+    <p>Fecha de publicación: {{ question.pub_date }}</p>
+    <p>Fecha de cierre: {{ question.pollEndDate }}</p>
+
+    <table>
+        <thead>
+            <tr>
+                <th class="col1">Opción</th>
+                <th class="col2">Votos</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for vote in votes %}
+            <tr>
+                <td class="col1">{{ vote.choice.choice_text }}</td>
+                <td class="col2">{{ vote.user }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>
+
+{% endblock%}

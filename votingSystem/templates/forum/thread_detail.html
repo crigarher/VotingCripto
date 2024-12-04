@@ -47,7 +47,8 @@
                             {% else %}
                                 <p>This poll is closed.</p>
                                  <a href="{% url 'polls:results' question.id %}" class="btn btn-primary btn-lg btn-block">View Results</a>
-                            {% endif %}
+                                 <a href="{% url 'polls:generate_pdf' question.id %}" class="button">Results in pdf</a>
+                                                             {% endif %}
                         </form>
                     </li>
                 {% endfor %}

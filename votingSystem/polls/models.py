@@ -34,10 +34,11 @@ class Choice(models.Model):
         return self.choice_text
 
 class Vote(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)  # Usuario que votó
+    user = models.CharField(max_length=255, blank=True, null=True)
     question = models.ForeignKey(Question, on_delete=models.CASCADE)  # Pregunta votada
     timestamp = models.DateTimeField(auto_now_add=True)  # Registro del tiempo del voto
-
+    choice = models.ForeignKey(Choice, on_delete=models.CASCADE)
+    
     class Meta:
         unique_together = ('user', 'question')  # Evitar que un usuario vote más de una vez por pregunta
 
