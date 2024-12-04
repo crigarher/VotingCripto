@@ -1,66 +1,173 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{% block title %} e-Voting{% endblock %}</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    
+    <!-- Google Fonts for a modern touch -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+
+    <!-- Bootstrap 5 CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom Styles -->
     <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f4f7fb; /* Light background */
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Navbar styling */
         .navbar {
-            background-color: #4e5d6c; /* Color cálido y profesional */
+            background: linear-gradient(135deg, #6e7dff, #3e6fff);
+            padding: 1rem 2rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
         }
 
         .navbar-brand, .nav-link {
-            color: #ffffff !important;
+            color: #fff !important;
+            font-weight: 600;
+            font-size: 1.1rem;
         }
 
         .navbar-toggler-icon {
-            background-color: #ffffff;
+            background-color: #fff;
         }
 
         .navbar-nav .nav-link:hover {
-            color: #ffd700 !important; /* Hover color dorado */
+            color: #ffd700 !important; /* Hover color */
+            transition: color 0.3s ease;
+        }
+
+        /* Sticky Navbar */
+        .navbar.fixed-top {
+            position: sticky;
+            top: 0;
+            z-index: 1030;
+        }
+
+        /* Button styling */
+        .btn-primary {
+            background-color: #6e7dff;
+            color: #fff;
+            border: none;
+            border-radius: 50px;
+            padding: 0.5rem 1.5rem;
+            transition: background-color 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            background-color: #3e6fff;
+        }
+
+        /* Content Styling */
+        .container {
+            padding: 3rem 2rem;
+        }
+
+        /* Custom Card Style */
+        .card {
+            background-color: #fff;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            transition: box-shadow 0.3s ease;
+        }
+
+        .card:hover {
+            box-shadow: 0 12px 45px rgba(0, 0, 0, 0.15);
+        }
+
+        .card-header {
+            background: #6e7dff;
+            color: #fff;
+            font-size: 1.25rem;
+            font-weight: 600;
+            padding: 1rem;
+        }
+
+        .card-body {
+            padding: 1.5rem;
+        }
+
+        /* Footer */
+        footer {
+            background-color: #3e6fff;
+            color: #fff;
+            text-align: center;
+            padding: 1rem;
+            position: fixed;
+            width: 100%;
+            bottom: 0;
+        }
+
+        /* Responsive Styling */
+        @media (max-width: 768px) {
+            .navbar {
+                padding: 0.75rem 1rem;
+            }
+
+            .container {
+                padding: 2rem;
+            }
         }
     </style>
 </head>
 
 <body>
-<!--NavBar-->
-<nav class="navbar navbar-expand-lg navbar-dark">
-    <a class="navbar-brand" href="{% url 'thread_list' %}">e-Voting</a>
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse" id="navbarNav">
-        <ul class="navbar-nav ml-auto">
-            <li class="nav-item active">
-                <a class="nav-link" href="{% url 'thread_list' %}">Home</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="{% url 'create_thread' %}">Create Thread</a>
-            </li>
-            {% if user.is_authenticated %}
-            <li class="nav-item">
-                <a class="nav-link" href="{% url 'logout' %}">Logout</a>
-            </li>
-            {% else %}
-            <li class="nav-item">
-                <a class="nav-link" href="{% url 'login' %}">Login</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="{% url 'signup' %}">Sign Up</a>
-            </li>
-            {% endif %}
-        </ul>
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
+        <a class="navbar-brand" href="{% url 'thread_list' %}">
+           e-Voting
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+            aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item active">
+                    <a class="nav-link" href="{% url 'thread_list' %}">Home</a>
+                </li>
+          
+            
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'create_thread' %}">Create Thread</a>
+                </li>
+                  </ul>
+                  
+                <ul class="navbar-nav ms-auto">
+                {% if user.is_authenticated %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'logout' %}">Logout</a>
+                    </li>
+                {% else %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'login' %}">Login</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'signup' %}">Sign Up</a>
+                    </li>
+                {% endif %}
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Content Block -->
+    <div class="container">
+        {% block content %}
+        <!-- Add your content here -->
+        {% endblock %}
     </div>
-</nav>
 
-<!-- You can place the content of your page here -->
-{% block content %}
-{% endblock %}
 
-<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <!-- Bootstrap JS (popper and bootstrap) -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
 </body>
+
 </html>

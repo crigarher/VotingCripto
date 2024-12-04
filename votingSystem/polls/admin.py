@@ -23,7 +23,7 @@ class ChoiceInLine(admin.TabularInline):
 
 class QuestionAdmin(admin.ModelAdmin):
     fieldsets = [(None, {'fields': ['question_text']}), ('Date Information', {
-        'fields': ['pub_date'], 'classes': ['collapse']}), ]
+        'fields': ['pollEndDate'], 'classes': ['collapse']}), ]
     inlines = [ChoiceInLine]
 
 

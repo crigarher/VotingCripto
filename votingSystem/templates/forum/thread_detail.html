@@ -42,13 +42,19 @@
                                     </li>
                                 {% endfor %}
                             </ul>
-                            <button type="submit">Vote</button>
+                            {% if question.is_active%}
+                                <button type="submit">Vote</button>
+                            {% else %}
+                                <p>This poll is closed.</p>
+                                 <a href="{% url 'polls:results' question.id %}" class="btn btn-primary btn-lg btn-block">View Results</a>
+                            {% endif %}
                         </form>
                     </li>
                 {% endfor %}
             </ul>
         {% else %}
             <p>No polls available for this thread.</p>
+           
         {% endif %}
     </div>
     {% if user_is_admin %}
@@ -60,7 +66,7 @@
         <ul id="post-list">
             {% for post in posts %}
                 <li>
-                    <strong>{{ post.author.username }}</strong> <small>({{ post.created_at }})</small>
+                    <strong>{{post.anonymous_author }}</strong> <small>({{ post.created_at }})</small>
                     <p>{{ post.body }}</p>
                 </li>
             {% empty %}
@@ -79,7 +85,6 @@
     </div>
 </div>
 
-
 <script>
     document.getElementById('create-post-form').addEventListener('submit', function(event) {
         event.preventDefault();
@@ -96,25 +101,35 @@
         })
         .then(response => response.json())
         .then(data => {
-            console.log('Comment added:', data);
+            if (data.error) {
+                console.error('Error al agregar el comentario:', data.error);
+                return;
+            }
+
+            console.log('Comentario añadido:', data);
 
             const postList = document.getElementById('post-list');
             const newPost = document.createElement('li');
-            newPost.innerHTML = `<strong>${data.author}</strong> <small>(${data.created_at})</small><p>${data.body}</p>`;
+            newPost.innerHTML = `<strong>${data.author_hash}</strong> <small>(${data.created_at})</small><p>${data.body}</p>`;
             postList.appendChild(newPost);
 
-            document.getElementById('post-body').value = ''; // Clear the textarea
+            document.getElementById('post-body').value = ''; // Limpiar el textarea
         })
         .catch(error => {
             console.error('Error:', error);
         });
     });
 
-     function actualizarPosts() {
+    function actualizarPosts() {
         fetch("{% url 'obtener_posts' thread.id %}")
         .then(response => response.json())
         .then(data => {
-            console.log('Posts updated:', data);
+            if (data.error) {
+                console.error('Error al obtener los posts:', data.error);
+                return;
+            }
+
+            console.log('Posts actualizados:', data);
 
             // Limpiar la lista de posts existente
             const postList = document.getElementById('post-list');
@@ -123,7 +138,7 @@
             // Renderizar los nuevos posts
             data.posts.forEach(post => {
                 const postItem = document.createElement('li');
-                postItem.innerHTML = `<strong>${post.author}</strong> <small>(${post.created_at})</small><p>${post.body}</p>`;
+                postItem.innerHTML = `<strong>${post.anonymous_author}</strong> <small>(${post.created_at})</small><p>${post.body}</p>`;
                 postList.appendChild(postItem);
             });
         })
@@ -132,12 +147,13 @@
         });
     }
 
-    // Llamar a la función de actualización cada 5 segundos
+    // Llamar a la función de actualización cada 1 segundo
     setInterval(actualizarPosts, 1000);
 
     // Llamar a la función una vez al cargar la página
     actualizarPosts();
 </script>
+
 
 </body>
 </html>

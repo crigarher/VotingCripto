@@ -16,7 +16,8 @@ class Post(models.Model):
     body = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    author = models.ForeignKey(User, on_delete=models.CASCADE)
+    anonymous_author = models.CharField(max_length=255, blank=True, null=True) 
+   
 
     def __str__(self):
-        return f'{self.thread.title} - {self.author.username}'
+        return f'{self.thread.title} - {self.anonymous_author}'

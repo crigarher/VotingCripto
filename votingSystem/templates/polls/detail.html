@@ -15,6 +15,7 @@
 </p>
 <a href="{% url 'polls:results' question.id %}" class="btn btn-primary btn-lg btn-block">View Results</a>
 {% else %}
+
 <form action="{% url 'polls:vote' question.id %}" method="post">
     {% csrf_token %}
     {% for choice in question.choice_set.all %}

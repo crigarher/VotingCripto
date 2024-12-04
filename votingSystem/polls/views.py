@@ -1,3 +1,5 @@
+import hashlib
+import uuid
 from django.template import loader
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render, redirect
@@ -49,7 +51,8 @@ def detail(request, question_id):
 @login_required
 def results(request, question_id):
     question = get_object_or_404(Question, pk=question_id)
-    return render(request, 'polls/results.html', {'question': question})
+    votes = Vote.objects.filter(question=question).select_related('user', 'choice')
+    return render(request, 'polls/results.html', {'question': question, 'votes': votes})
 
 # Vote for a question choice
 
@@ -58,6 +61,12 @@ def results(request, question_id):
 def vote(request, question_id):
     question = get_object_or_404(Question, pk=question_id)
 
+    if  not question.is_active:
+        return render(request, 'polls/detail.html', {
+            'question': question,
+            'error_message': "The poll is closed.",
+        })
+    
     # Verificar si el usuario ya votó en esta pregunta
     if Vote.objects.filter(user=request.user, question=question).exists():
         return render(request, 'polls/detail.html', {
@@ -118,3 +127,7 @@ def create_poll(request, thread_id):
         'choice_formset': choice_formset,
         'thread': thread,
     })
+
+def generate_alias_hash():
+    alias = str(uuid.uuid4())
+    return hashlib.sha256(alias.encode()).hexdigest()

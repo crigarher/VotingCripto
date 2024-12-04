@@ -1,6 +1,7 @@
 from django.urls import path
 from . import views
 
+
 urlpatterns = [
     path('', views.thread_list, name='thread_list'),
     path('thread/create/', views.create_thread, name='create_thread'),

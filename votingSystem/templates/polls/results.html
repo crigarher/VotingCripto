@@ -2,18 +2,31 @@
 
 {% block content %}
 <div class="container my-5">
-    <h1 class="text-center mb-4" style="font-size: 2.5rem; color: #333;">{{ question.question_text }}</h1>
+    <!-- Título principal -->
+    <h1 class="text-center mb-5" style="font-size: 3rem; font-weight: 700; color: #2C3E50; letter-spacing: 1px;">
+        {{ question.question_text }}
+    </h1>
 
-    <ul class="list-group shadow-sm rounded-lg mb-5">
+    <!-- Lista de opciones -->
+    <ul class="list-group">
         {% for choice in question.choice_set.all %}
-        <li class="list-group-item d-flex justify-content-between align-items-center bg-light rounded-lg mb-3 shadow-sm">
-            <span style="font-size: 1.2rem; color: #444;">{{ choice.choice_text }}</span>
-            <span class="badge badge-success py-2 px-4" style="font-size: 1.1rem; border-radius: 12px; background-color: #28a745;">{{ choice.votes }} vote{{ choice.votes | pluralize }}</span>
+        <li class="list-group-item d-flex justify-content-between align-items-center bg-white rounded-lg mb-4 shadow-lg transition-all duration-300 ease-in-out transform hover:scale-105 hover:shadow-xl">
+            <!-- Texto de la opción -->
+            <span style="font-size: 1.4rem; color: #34495E; font-weight: 500; padding-left: 20px;">
+                {{ choice.choice_text }}
+            </span>
+
+            <!-- Votos -->
+            <span class="badge py-2 px-4" style="font-size: 1.1rem; background-color: #1ABC9C; color: white; border-radius: 50px;">
+                {{ choice.votes }} vote{{ choice.votes | pluralize }}
+            </span>
         </li>
         {% endfor %}
     </ul>
 
-    <a href="{% url 'polls:index' %}" class="btn btn-primary btn-lg w-100" style="border-radius: 8px; background-color: #007bff; font-size: 1.2rem; padding: 15px; transition: background-color 0.3s ease;">Back To Polls</a>
+    <!-- Botón de vuelta -->
+    <a href="{% url 'thread_list' %}" class="btn btn-lg btn-block" style="background-color: #3498DB; color: white; font-size: 1.3rem; padding: 16px; border-radius: 50px; box-shadow: 0 5px 15px rgba(52, 152, 219, 0.3); transition: background-color 0.3s ease, transform 0.3s ease;">
+        <i class="fas fa-arrow-left"></i> Back
+    </a>
 </div>
-
 {% endblock %}
