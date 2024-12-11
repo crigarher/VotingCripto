@@ -59,16 +59,16 @@ def create_post(request, thread_id):
         try:
             data = json.loads(request.body)
             thread = get_object_or_404(Thread, id=thread_id)
-            user_hash = request.session.get('user_hash')
-            if not user_hash:
+            alias_hash = request.session.get('alias_hash')
+            if not alias_hash:
                 # Generar un hash en caso de que no exista y guardarlo en la sesión
-                user_hash = generate_alias_hash()
-                request.session['user_hash'] = user_hash
+                alias_hash = generate_alias_hash()
+                request.session['alias_hash'] = alias_hash
                 request.session.modified = True
             post = Post.objects.create(
                 thread=thread,
                 body=data['body'],
-                anonymous_author=user_hash,
+                anonymous_author=alias_hash,
                
             )
             print(post)
